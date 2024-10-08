@@ -31,12 +31,14 @@ pipeline {
                 // Run the container to test if it's running correctly
                 script {
                     docker.image(IMAGE_NAME).inside {
-                        sh 'curl -I http://localhost:80'
+                        // Test against the correct port 8029
+                        sh 'curl -I http://localhost:8029'
                     }
                 }
             }
         }
 
+        /*
         stage('Push Docker Image to DockerHub') {
             steps {
                 script {
@@ -47,12 +49,14 @@ pipeline {
                 }
             }
         }
+        */
 
         stage('Deploy') {
             steps {
-                // Here you could define deployment steps, for example, SSH into a server and run the Docker container
-                // Or you can use tools like Kubernetes or Docker Swarm to deploy the container
-                echo 'Deploying to server...'
+                script {
+                    // Run the Docker container on port 8029
+                    sh 'docker run -d -p 8029:80 --name todo-app-container business-homepage'
+                }
             }
         }
     }
